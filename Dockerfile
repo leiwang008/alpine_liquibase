@@ -8,10 +8,10 @@ ENV PG_VERSION="42.2.20" \
     LIQUIBASE_HOME="/liquibase" \
     LIQUIBASE_DRIVER="org.postgresql.Driver" \
     LIQUIBASE_CLASSPATH="${LIQUIBASE_HOME}/lib/postgresql.jar" \
-    LIQUIBASE_URL="jdbc:postgresql://postgres_host:5432/postgres" \
+    LIQUIBASE_URL="jdbc:postgresql://alpine_postgres:5432/postgres" \
     LIQUIBASE_USERNAME="postgres" \
     LIQUIBASE_PASSWORD="postgres" \
-    LIQUIBASE_CHANGELOG="liquibase.xml" \
+    LIQUIBASE_CHANGELOG="changelog.xml" \
     LIQUIBASE_CONTEXTS="" \
     LIQUIBASE_OPTS=""
 
@@ -49,13 +49,15 @@ RUN wget -O ${LIQUIBASE_HOME}/lib/postgresql.jar https://repo1.maven.org/maven2/
 
 COPY --chown=liquibase:liquibase entrypoint.sh ${LIQUIBASE_HOME}/
 COPY --chown=liquibase:liquibase liquibase.sh ${LIQUIBASE_HOME}/
+COPY --chown=liquibase:liquibase ${LIQUIBASE_CHANGELOG} ${LIQUIBASE_HOME}/
 
 RUN ls -al ${LIQUIBASE_HOME}
 
 RUN chmod +x ${LIQUIBASE_HOME}/entrypoint.sh \
     && chmod +x ${LIQUIBASE_HOME}/liquibase.sh 
 
-ENTRYPOINT ["${LIQUIBASE_HOME}/entrypoint.sh"]
+# ENTRYPOINT ["${LIQUIBASE_HOME}/entrypoint.sh"]
+ENTRYPOINT ["/liquibase/entrypoint.sh"]
 
 # delete the apk dependencies at the end of building
 USER root
