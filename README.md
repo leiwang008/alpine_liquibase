@@ -3,7 +3,7 @@ mobtitude/liquibase
 
 The [Liquibase](http://www.liquibase.org) docker image, based on `java:jre-alpine` with postgres driver.
 
-This image is inspired by `mobtitude/liquibase`.
+This image is inspired by [mobtitude/liquibase](https://github.com/mobtitude/liquibase).
 
 Usage
 -----
@@ -33,4 +33,11 @@ Environment variables
 | `LIQUIBASE_CONTEXTS`  | Server contexts                    | *empty*                               |
 | `LIQUIBASE_OPTS`      | Additional options                 | *empty*                               |
 
+Reference
+---------
+> https://www.liquibase.org/  
+  https://github.com/mobtitude  
+  https://github.com/liquibase/docker  
+  https://docs.liquibase.com/workflows/liquibase-community/using-liquibase-and-docker.html  
+  https://github.com/liquibase/liquibase/releases  
 
