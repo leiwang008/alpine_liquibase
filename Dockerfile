@@ -1,17 +1,23 @@
 FROM java:jre-alpine
 
 RUN set -x \
-    && apk add --no-cache --update --virtual .build-deps openssl
+    && apk add --no-cache --update --virtual .build-deps openssl tree bash
 
+# cannot refer to a environment when defining another environment
+# we have to define some arguments so that we can use them to define environments
+ARG POSTGRES_SERVER_ARG="alpine_postgres"
+ARG LIQUIBASE_HOME_ARG="/liquibase"
+
+# define environments
 ENV PG_VERSION="42.2.20" \
     LIQUIBASE_VERSION="4.3.5" \
-    LIQUIBASE_HOME="/liquibase" \
+    LIQUIBASE_HOME="${LIQUIBASE_HOME_ARG}" \
     LIQUIBASE_DRIVER="org.postgresql.Driver" \
-    LIQUIBASE_CLASSPATH="${LIQUIBASE_HOME}/lib/postgresql.jar" \
-    POSTGRES_SERVER="alpine_postgres" \
-    LIQUIBASE_URL="jdbc:postgresql://${POSTGRES_SERVER}:5432/postgres" \
+    LIQUIBASE_CLASSPATH="${LIQUIBASE_HOME_ARG}/lib/postgresql.jar" \
+    POSTGRES_SERVER="${POSTGRES_SERVER_ARG}" \
+    LIQUIBASE_URL="jdbc:postgresql://${POSTGRES_SERVER_ARG}:5432/postgres" \
     LIQUIBASE_USERNAME="postgres" \
-    LIQUIBASE_PASSWORD="postgres" \
+    LIQUIBASE_PASSWORD="mypass" \
     LIQUIBASE_CHANGELOG="changelog.xml" \
     LIQUIBASE_CONTEXTS="" \
     LIQUIBASE_OPTS=""
@@ -29,24 +35,32 @@ WORKDIR ${LIQUIBASE_HOME}
 #Symbolic link will be broken until later
 RUN ln -s ${LIQUIBASE_HOME}/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh \
   && ln -s ${LIQUIBASE_HOME}/docker-entrypoint.sh /docker-entrypoint.sh \
-  && ln -s ${LIQUIBASE_HOME}/liquibase /usr/local/bin/liquibase
+  && ln -s ${LIQUIBASE_HOME}/liquibase /usr/local/bin/liquibase 
 
 # Change to the liquibase user
 USER liquibase
 
 # Download, verify, extract 'liquibase'
 ARG LB_SHA256=5ce62afa9efa5c5b7b8f8a31302959a31e70b1a5ee579a2f701ea464984c0655
+# RUN set -x \
+#   && wget -O liquibase-${LIQUIBASE_VERSION}.tar.gz "https://github.com/liquibase/liquibase/releases/download/v${LIQUIBASE_VERSION}/liquibase-${LIQUIBASE_VERSION}.tar.gz" \
+#   && echo "$LB_SHA256  liquibase-${LIQUIBASE_VERSION}.tar.gz" | sha256sum -c - \
+#   && tar -xzf liquibase-${LIQUIBASE_VERSION}.tar.gz \
+#   && rm liquibase-${LIQUIBASE_VERSION}.tar.gz
+
+COPY --chown=liquibase:liquibase liquibase-*.tar.gz ${LIQUIBASE_HOME}/
 RUN set -x \
-  && wget -O liquibase-${LIQUIBASE_VERSION}.tar.gz "https://github.com/liquibase/liquibase/releases/download/v${LIQUIBASE_VERSION}/liquibase-${LIQUIBASE_VERSION}.tar.gz" \
   && echo "$LB_SHA256  liquibase-${LIQUIBASE_VERSION}.tar.gz" | sha256sum -c - \
   && tar -xzf liquibase-${LIQUIBASE_VERSION}.tar.gz \
   && rm liquibase-${LIQUIBASE_VERSION}.tar.gz
 
 # Download JDBC libraries, verify via GPG and checksum
 ARG PG_SHA1=36cc2142f46e8f4b77ffc1840ada1ba33d96324f
-RUN wget -O ${LIQUIBASE_HOME}/lib/postgresql.jar https://repo1.maven.org/maven2/org/postgresql/postgresql/${PG_VERSION}/postgresql-${PG_VERSION}.jar \
-	&& wget -O ${LIQUIBASE_HOME}/lib/postgresql.jar.asc https://repo1.maven.org/maven2/org/postgresql/postgresql/${PG_VERSION}/postgresql-${PG_VERSION}.jar.asc \
-	&& echo "$PG_SHA1  ${LIQUIBASE_HOME}/lib/postgresql.jar" | sha1sum -c - 
+# RUN wget -O ${LIQUIBASE_HOME}/lib/postgresql.jar https://repo1.maven.org/maven2/org/postgresql/postgresql/${PG_VERSION}/postgresql-${PG_VERSION}.jar \
+# 	&& wget -O ${LIQUIBASE_HOME}/lib/postgresql.jar.asc https://repo1.maven.org/maven2/org/postgresql/postgresql/${PG_VERSION}/postgresql-${PG_VERSION}.jar.asc \
+# 	&& echo "$PG_SHA1  ${LIQUIBASE_HOME}/lib/postgresql.jar" | sha1sum -c - 
+
+COPY --chown=liquibase:liquibase postgresql-*.jar ${LIQUIBASE_HOME}/lib/postgresql.jar
 
 
 COPY --chown=liquibase:liquibase *.sh ${LIQUIBASE_HOME}/
@@ -56,14 +70,15 @@ COPY --chown=liquibase:liquibase scripts/*.sh ${LIQUIBASE_HOME}/scripts/
 RUN chmod +x ${LIQUIBASE_HOME}/*.sh \
     && chmod +x ${LIQUIBASE_HOME}/scripts/*.sh
 
-RUN ls -al ${LIQUIBASE_HOME}
+# RUN ls -al ${LIQUIBASE_HOME}
+RUN tree -a
 
 # ENTRYPOINT ["${LIQUIBASE_HOME}/entrypoint.sh"]
 ENTRYPOINT ["/liquibase/entrypoint.sh"]
 # ENTRYPOINT ["/liquibase/init.sh"]
 
 # delete the apk dependencies at the end of building
-USER root
-RUN apk del --no-cache .build-deps
+# USER root
+# RUN apk del --no-cache .build-deps
 
 # docker run -v /home/changelog:/liquibase/changelog liquibase/liquibase --driver=org.postgresql.Driver --url=”jdbc:postgresql://<DATABASE_IP>:5432/postgres”  --changeLogFile=/liquibase/changelog/changelog.xml --username=postgres  --password=postgres

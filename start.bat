@@ -9,7 +9,7 @@ docker run --network=rt_database --name alpine_postgres --publish 5432:5432 -e P
 
 
 echo "Create a liquibase 'alpine_liquibase' in network 'rt_database' to update database in 'alpine_postgres'
-docker run --network=rt_database --name alpine_liquibase --rm leiwang008/alpine_liquibase update
+docker run --network=rt_database --name alpine_liquibase --rm  leiwang008/alpine_liquibase update
 @REM docker run --network=rt_database --name alpine_liquibase --rm -e LIQUIBASE_CHANGELOG=/liquibase/changelog.txt leiwang008/alpine_liquibase update
 @REM docker run --network=rt_database --name alpine_liquibase --rm leiwang008/alpine_liquibase showConf
 
