@@ -1,9 +1,17 @@
-mobtitude/liquibase
-===================
+leiwang008/alpine_liquibase
+===========================
 
 The [Liquibase](http://www.liquibase.org) docker image, based on `java:jre-alpine` with postgres driver.
 
 This image is inspired by [mobtitude/liquibase](https://github.com/mobtitude/liquibase).
+
+Build
+-----
+
+```
+docker build -t leiwang008/alpine_liquibase .
+```
+
 
 Usage
 -----
@@ -16,7 +24,7 @@ docker run --rm \
     -e LIQUIBASE_URL=jdbc:postgresql://postgres_host:5432/postgres \
     -e LIQUIBASE_USERNAME=postgres \
     -e LIQUIBASE_PASSWORD=postgres \
-    leiwang008/liquibase update
+    leiwang008/alpine_liquibase update
 ```
 
 
