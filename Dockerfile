@@ -58,9 +58,4 @@ RUN chmod +x /liquibase/entrypoint.sh \
 
 ENTRYPOINT ["/liquibase/entrypoint.sh"]
 
-# https://www.liquibase.org/
-# https://github.com/mobtitude
-# https://github.com/liquibase/docker
-# https://docs.liquibase.com/workflows/liquibase-community/using-liquibase-and-docker.html
-# https://github.com/liquibase/liquibase/releases
 # docker run -v /home/changelog:/liquibase/changelog liquibase/liquibase --driver=org.postgresql.Driver --url=”jdbc:postgresql://<DATABASE_IP>:5432/postgres”  --changeLogFile=/liquibase/changelog/changelog.xml --username=postgres  --password=postgres

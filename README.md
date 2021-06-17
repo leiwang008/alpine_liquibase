@@ -27,8 +27,8 @@ Environment variables
 |-----------------------|------------------------------------|---------------------------------------|
 | `LIQUIBASE_VERSION`   | Installed Liquibase version        | *not changeable*                      |
 | `LIQUIBASE_URL`       | DB url                             | *jdbc:postgresql://postgres_host:5432/postgres* (eg. `jdbc:postgresql://host:port/database`) |
-| `LIQUIBASE_USERNAME`  | DB username                        | *postgres*                               |
-| `LIQUIBASE_PASSWORD`  | DB password                        | *postgres*                               |
+| `LIQUIBASE_USERNAME`  | DB username                        | *postgres*                            |
+| `LIQUIBASE_PASSWORD`  | DB password                        | *postgres*                            |
 | `LIQUIBASE_CHANGELOG` | Changelog file                     | `/liquibase/changelog.xml`            |
 | `LIQUIBASE_CONTEXTS`  | Server contexts                    | *empty*                               |
 | `LIQUIBASE_OPTS`      | Additional options                 | *empty*                               |
@@ -36,7 +36,7 @@ Environment variables
 Reference
 ---------
 > https://www.liquibase.org/  
-  https://github.com/mobtitude  
+  https://github.com/mobtitude/liquibase  
   https://github.com/liquibase/docker  
   https://docs.liquibase.com/workflows/liquibase-community/using-liquibase-and-docker.html  
   https://github.com/liquibase/liquibase/releases  
