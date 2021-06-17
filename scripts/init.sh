@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
-/opt/liquibase/liquibase \
-    --driver=org.postgresql.Driver \
-    --url=$LQ_POSTGRES_URL \
-    --classpath=/usr/share/java/postgresql.jar \
-    --changeLogFile=/liquibase/changelog.yaml \
-    --username=$LQ_POSTGRES_USER \
-    --password=$LQ_POSTGRES_PASSWORD \
-    --contexts="$LQ_CONTEXT" \
+
+/liquibase/liquibase \
+    --driver=$LIQUIBASE_DRIVER \
+    --url=$LIQUIBASE_URL \
+    --classpath=$LIQUIBASE_CLASSPATH \
+    --changeLogFile=$LIQUIBASE_HOME/$LIQUIBASE_CHANGELOG \
+    --username=$LIQUIBASE_USERNAME \
+    --password=$LIQUIBASE_PASSWORD \
+    --contexts="$LIQUIBASE_CONTEXTS" \
     update
