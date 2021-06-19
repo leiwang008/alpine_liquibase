@@ -5,30 +5,37 @@ RUN set -x \
 
 # cannot refer to a environment when defining another environment
 # we have to define some arguments so that we can use them to define environments
-ARG POSTGRES_SERVER_ARG="alpine_postgres"
-ARG LIQUIBASE_HOME_ARG="/liquibase"
+
+# 'alpine_postgres' is the name of the container running postgres database
+ARG ARG_POSTGRES_SERVER="alpine_postgres"
+ARG ARG_LIQUIBASE_HOME="/liquibase"
+# the directory 'changelogs' hold all liquibase changelog files
+ARG ARG_LIQUIBASE_CHANGELOG_DIR="changelogs"
+# the changelog 'main_changelog.xml' includes all other changelog files
+ARG ARG_LIQUIBASE_MAIN_CHANGELOG="main_changelog.xml"
 
 # define environments
 ENV PG_VERSION="42.2.20" \
     LIQUIBASE_VERSION="4.3.5" \
-    LIQUIBASE_HOME="${LIQUIBASE_HOME_ARG}" \
+    LIQUIBASE_HOME="${ARG_LIQUIBASE_HOME}" \
     LIQUIBASE_DRIVER="org.postgresql.Driver" \
-    LIQUIBASE_CLASSPATH="${LIQUIBASE_HOME_ARG}/lib/postgresql.jar" \
-    POSTGRES_SERVER="${POSTGRES_SERVER_ARG}" \
-    LIQUIBASE_URL="jdbc:postgresql://${POSTGRES_SERVER_ARG}:5432/postgres" \
+    LIQUIBASE_CLASSPATH="${ARG_LIQUIBASE_HOME}/lib/postgresql.jar" \
+    POSTGRES_SERVER="${ARG_POSTGRES_SERVER}" \
+    LIQUIBASE_URL="jdbc:postgresql://${ARG_POSTGRES_SERVER}:5432/postgres" \
     LIQUIBASE_USERNAME="postgres" \
     LIQUIBASE_PASSWORD="mypass" \
-    LIQUIBASE_CHANGELOG="changelog.xml" \
+    LIQUIBASE_CHANGELOG="${ARG_LIQUIBASE_MAIN_CHANGELOG}" \
     LIQUIBASE_CONTEXTS="" \
+    LIQUIBASE_HUB_MODE="off" \
     LIQUIBASE_OPTS=""
 
-# Add the liquibase group user and step in the directory
-# Make /liquibase directory and change owner to liquibase
+# Add the 'liquibase' group user
+# Make /liquibase, /liquibase/scripts, /liquibase/changelogs directory and change owner as 'liquibase'
 RUN set -eux \
     && addgroup -g 1001 -S liquibase \
     && adduser -u 1001 -S -D -G liquibase -H -h ${LIQUIBASE_HOME} -s /bin/sh liquibase \
-    && mkdir ${LIQUIBASE_HOME} && chown -R liquibase:liquibase ${LIQUIBASE_HOME} \
-    && mkdir ${LIQUIBASE_HOME}\scripts && chown -R liquibase:liquibase ${LIQUIBASE_HOME}\scripts
+    && mkdir -p ${LIQUIBASE_HOME} ${LIQUIBASE_HOME}\scripts ${LIQUIBASE_HOME}\${ARG_LIQUIBASE_CHANGELOG_DIR} \
+    && chown -R liquibase:liquibase ${LIQUIBASE_HOME}
 
 WORKDIR ${LIQUIBASE_HOME}
 
@@ -62,13 +69,15 @@ ARG PG_SHA1=36cc2142f46e8f4b77ffc1840ada1ba33d96324f
 
 COPY --chown=liquibase:liquibase postgresql-*.jar ${LIQUIBASE_HOME}/lib/postgresql.jar
 
-
+# copy scripts to approperiate directories
 COPY --chown=liquibase:liquibase *.sh ${LIQUIBASE_HOME}/
-COPY --chown=liquibase:liquibase ${LIQUIBASE_CHANGELOG} ${LIQUIBASE_HOME}/
 COPY --chown=liquibase:liquibase scripts/*.sh ${LIQUIBASE_HOME}/scripts/
+RUN chmod a+x ${LIQUIBASE_HOME}/*.sh \
+    && chmod a+x ${LIQUIBASE_HOME}/scripts/*.sh
 
-RUN chmod +x ${LIQUIBASE_HOME}/*.sh \
-    && chmod +x ${LIQUIBASE_HOME}/scripts/*.sh
+# copy the main changelog to home directory, copy the whole 'changelogs' directory to home directory
+COPY --chown=liquibase:liquibase ${ARG_LIQUIBASE_MAIN_CHANGELOG} ${ARG_LIQUIBASE_HOME}/
+COPY --chown=liquibase:liquibase ${ARG_LIQUIBASE_CHANGELOG_DIR}/*.xml ${ARG_LIQUIBASE_HOME}/${ARG_LIQUIBASE_CHANGELOG_DIR}/
 
 # RUN ls -al ${LIQUIBASE_HOME}
 RUN tree -a
