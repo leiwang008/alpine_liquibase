@@ -83,7 +83,7 @@ COPY --chown=liquibase:liquibase ${ARG_LIQUIBASE_CHANGELOG_DIR}/*.xml ${ARG_LIQU
 RUN tree -a
 
 # ENTRYPOINT ["${LIQUIBASE_HOME}/entrypoint.sh"]
-ENTRYPOINT ["/liquibase/entrypoint.sh"]
+# ENTRYPOINT ["/liquibase/entrypoint.sh"]
 # ENTRYPOINT ["/liquibase/init.sh"]
 
 # delete the apk dependencies at the end of building

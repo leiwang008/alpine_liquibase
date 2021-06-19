@@ -58,6 +58,12 @@ Usage
         leiwang008/alpine_liquibase update
     ```
 
+Usage with docker compose
+-------------------------
+
+The 'container_name' or 'hostname' all can be recognized as the contianer's hostname to connect!
+
+
 Environment variables
 ---------------------
 
@@ -89,6 +95,12 @@ Reference
   https://github.com/liquibase/liquibase/releases  
   http://www.manongjc.com/article/35945.html  
   https://blog.csdn.net/li_w_ch/article/details/109125209  
+
+> docker compose  
+  https://www.cnblogs.com/ray-mmss/p/10868754.html  
+  https://docs.docker.com/compose/networking/  
+  https://docs.docker.com/compose/startup-order/  
+  
   
 
 
