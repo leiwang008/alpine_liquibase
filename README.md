@@ -35,19 +35,21 @@ Usage
     docker run --rm --network=database_network -v "<changelogs absolute dir>":/liquibase/changelogs -it leiwang008/alpine_liquibase bash
     ```
 
-2. Showing the configurations
+docker run --rm --network=database_network -it leiwang008/alpine_liquibase bash
+
+1. Showing the configurations
 
     ```
     docker run --rm --network=database_network -v "<changelogs absolute dir>":/liquibase/changelogs leiwang008/alpine_liquibase conf
     ```
 
-3. Update database in 'alpine_postgres' by changelog files in folder 'changelogs'
+2. Update database in 'alpine_postgres' by changelog files in folder 'changelogs'
 
     ```
     docker run --rm --network=database_network -v "<changelogs absolute dir>":/liquibase/changelogs leiwang008/alpine_liquibase update
     ```
 
-4. Update database in 'alpine_postgres' by changelog files in folder 'changelogs' with more environment settings
+3. Update database in 'alpine_postgres' by changelog files in folder 'changelogs' with more environment settings
     ```
     docker run --rm \
         --network=database_network \
@@ -70,22 +72,31 @@ Environment variables
 | Environment variable  | Description                        | Default                                                                                            |
 |-----------------------|------------------------------------|----------------------------------------------------------------------------------------------------|
 | `LIQUIBASE_VERSION`   | Installed Liquibase version        | *not changeable*  (4.3.5)                                                                          |
-| `PG_VERSION`          | Postgres connector jar version     | *not changeable*  (42.2.20)                                                                        |
+| `POSTGRES_VERSION`    | Postgres connector jar version     | *not changeable*  (42.2.20)                                                                        |
 | `POSTGRES_SERVER`     | Postgres host name                 | *alpine_postgres*                                                                                  |
+| `POSTGRES_DB`         | name of database to use            | *postgres*                                                                                         |
+| `POSTGRES_USER`       | DB username                        | *postgres*                                                                                         |
+| `POSTGRES_PASSWORD`   | DB password                        | *mypass*                                                                                           |
 | `LIQUIBASE_DRIVER`    | database driver's name             | *org.postgresql.Driver*                                                                            |
 | `LIQUIBASE_CLASSPATH` | Postgres connector jar             | */liquibase/lib/postgresql.jar*                                                                    |
-| `LIQUIBASE_URL`       | DB url                             | *jdbc:postgresql://${POSTGRES_SERVER}:5432/postgres* (eg. `jdbc:postgresql://host:port/database`)  |
-| `LIQUIBASE_USERNAME`  | DB username                        | *postgres*                                                                                         |
-| `LIQUIBASE_PASSWORD`  | DB password                        | *mypass*                                                                                           |
+| `LIQUIBASE_URL`       | DB url                             | ** (eg. `jdbc:postgresql://alpine_postgres:5432/database`)                                         |
 | `LIQUIBASE_CHANGELOG` | Changelog file                     | `classpath:/liquibase/changelogs/main.xml`                                                         |
 | `LIQUIBASE_CONTEXTS`  | Server contexts                    | *empty*                                                                                            |
 | `LIQUIBASE_HUB_MODE`  | If need hub dashboard              | *off* (on | off)                                                                                   |
 | `LIQUIBASE_OPTS`      | Additional options                 | *empty*  refer to https://docsstage.liquibase.com/tools-integrations/cli/home.html                 |
 
 
+  <font color="red">*NOTE:* <br/>
+  <ol>
+  <li>The environment '**POSTGRES_SERVER**' will be used to form a URL "jdbc:postgresql://${**POSTGRES_SERVER**}:5432/database" for liquibase to connect
+  <li>If the environment '**LIQUIBASE_URL**' is defined, it will be used for liquibase to connect at the first, '**POSTGRES_SERVER**' will be ignored.
+  </ol>
+  </font>  
+
 Reference
 ---------
-> https://www.liquibase.org/  
+> liquibase  
+  https://www.liquibase.org/  
   https://docsstage.liquibase.com/tools-integrations/cli/home.html  
   https://docs.liquibase.com/commands/community/home.html  
   https://docs.liquibase.com/commands/pro/home.html  
@@ -97,10 +108,11 @@ Reference
   https://blog.csdn.net/li_w_ch/article/details/109125209  
 
 > docker compose  
-  https://www.cnblogs.com/ray-mmss/p/10868754.html  
+  https://docs.docker.com/compose/  
+  https://docs.docker.com/compose/compose-file/  
   https://docs.docker.com/compose/networking/  
   https://docs.docker.com/compose/startup-order/  
-  
-  
-
+  https://www.cnblogs.com/ray-mmss/p/10868754.html  
+  https://www.cnblogs.com/g2thend/p/11746679.html  
+  https://blog.csdn.net/qq_36148847/article/details/79427878  
 

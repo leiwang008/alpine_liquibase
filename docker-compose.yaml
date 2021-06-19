@@ -1,10 +1,16 @@
+# In service 
+# 1. 'alpine_postgres', the 'container_name' or 'hostname' both can be used to connect as server name, 
+#     the environment 'POSTGRES_SERVER' in 'alpine_liquibase' must keep the same with it
+
 version: "3"
 services:
 
     alpine_postgres:
+        build: 
+            context: ../alpine_postgres
         image: leiwang008/alpine_postgres
-        # container_name: alpine_postgres
-        hostname: alpine_postgres
+        # container_name: my_postgres
+        hostname: my_postgres
         ports:
             - "5432:5432"
         command: 
@@ -13,20 +19,29 @@ services:
             - db_network
         environment:
             - POSTGRES_PASSWORD=mypass
+            - POSTGRES_USER=rttest
+            - POSTGRES_DB=rtdb 
 
     alpine_liquibase:
+        build: 
+            context: .
+            args: 
+                - ARG_LIQUIBASE_HOME=/liquihome
         image: leiwang008/alpine_liquibase
         container_name: alpine_liquibase
-        command: ["./scripts/wait-for-it.sh", "alpine_postgres:5432", "--", "./entrypoint.sh", "update"]
-            # - update
+        command:
+            # - config
+            - update
         networks:
             - db_network
         volumes: 
             - "./changelogs:/liquibase/changelogs"
         environment:
-            - LIQUIBASE_PASSWORD=mypass
-            # - POSTGRES_SERVER=alpine_postgres
-            # - LIQUIBASE_URL="jdbc:postgresql://alpine_postgres:5432/postgres"
+            - POSTGRES_SERVER=my_postgres
+            - POSTGRES_DB=rtdb
+            - POSTGRES_USER=rttest
+            - POSTGRES_PASSWORD=mypass
+            # - LIQUIBASE_URL="jdbc:postgresql://my_postgres:5432/postgres"
         depends_on: 
             - alpine_postgres
 
