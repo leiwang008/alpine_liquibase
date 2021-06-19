@@ -1,0 +1,38 @@
+version: "3"
+services:
+
+    alpine_postgres:
+        image: leiwang008/alpine_postgres
+        # container_name: alpine_postgres
+        hostname: alpine_postgres
+        ports:
+            - "5432:5432"
+        command: 
+            - postgres
+        networks:
+            - db_network
+        environment:
+            - POSTGRES_PASSWORD=mypass
+
+    alpine_liquibase:
+        image: leiwang008/alpine_liquibase
+        container_name: alpine_liquibase
+        command: ["./scripts/wait-for-it.sh", "alpine_postgres:5432", "--", "./entrypoint.sh", "update"]
+            # - update
+        networks:
+            - db_network
+        volumes: 
+            - "./changelogs:/liquibase/changelogs"
+        environment:
+            - LIQUIBASE_PASSWORD=mypass
+            # - POSTGRES_SERVER=alpine_postgres
+            # - LIQUIBASE_URL="jdbc:postgresql://alpine_postgres:5432/postgres"
+        depends_on: 
+            - alpine_postgres
+
+networks:
+    db_network:
+
+    # default:
+    #     external: true
+    #     name: database_network
