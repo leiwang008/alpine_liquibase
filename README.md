@@ -49,7 +49,7 @@ Usage
 3. Showing the configurations
 
     ```
-    docker run --rm --network=database_network -v "<changelogs absolute dir>":/liquibase/changelogs leiwang008/alpine_liquibase conf
+    docker run --rm --network=database_network -v "<changelogs absolute dir>":/liquibase/changelogs leiwang008/alpine_liquibase config
     ```
 
 4. Start the image with a bash terminal, user can inspect the image.
