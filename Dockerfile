@@ -1,7 +1,8 @@
 FROM java:jre-alpine
 
 RUN set -x \
-    && apk add --no-cache --update --virtual .build-deps openssl tree bash
+    && apk add --no-cache --update --virtual .build-deps openssl tree \
+    && apk add --no-cache bash
 
 # cannot refer to a environment when defining another environment
 # we have to define some arguments so that we can use them to define environments
@@ -88,5 +89,5 @@ RUN tree -a
 ENTRYPOINT ["./scripts/wait_for_postgres_then_init.sh"]
 
 # delete the apk dependencies at the end of building
-# USER root
-# RUN apk del --no-cache .build-deps
+USER root
+RUN apk del --no-cache .build-deps
