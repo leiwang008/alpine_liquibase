@@ -9,7 +9,9 @@ RUN set -x \
 ARG ARG_LIQUIBASE_HOME="/liquibase"
 # the directory 'changelogs' hold all liquibase changelog files
 ARG ARG_LIQUIBASE_CHANGELOG_DIR="changelogs"
+
 # the changelog 'main_changelog.xml' includes all other changelog files
+# this file should be put into the folder on the classpath, now it is in the root directory which is on the classpath
 ARG ARG_LIQUIBASE_MAIN_CHANGELOG="main_changelog.xml"
 
 # define environments

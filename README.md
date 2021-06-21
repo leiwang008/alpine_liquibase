@@ -16,7 +16,7 @@ docker build -t leiwang008/alpine_liquibase .
 Usage
 -----
 
-+ prerequisite  
++ **prerequisite**  
   + Expecting an alpine postgres image **alpine_postgres** is running in network **database_network**  
 
         //create a network database_network
@@ -26,72 +26,85 @@ Usage
         //or run in interactive mode
         docker run --network=database_network --name alpine_postgres --publish 5432:5432 -e POSTGRES_PASSWORD=mypass --rm -it leiwang008/alpine_postgres postgres
 
-  + Expecting the changelog files `changelog1.xml`, `changelog2.xml` etc. are inside the directory **changelogs** which the liquibase 'update process' can run with. User can add more changelog file into that folder.
+  + Expecting the changelog files `changelog1.xml`, `changelog2.xml` etc. are inside the directory **changelogs** which the liquibase 'update process' can run with. User can add more changelog file into that folder. When running this image, user can map this folder to container's folder '/liquibase/changelogs' by **-v "\<changelogs absolute dir\>":/liquibase/changelogs**
 
 
-1. Start the image with a bash terminal, user can inspect the image.
-
-    ```
-    docker run --rm --network=database_network -v "<changelogs absolute dir>":/liquibase/changelogs -it leiwang008/alpine_liquibase bash
-    ```
-
-docker run --rm --network=database_network -it leiwang008/alpine_liquibase bash
-
-1. Showing the configurations
-
-    ```
-    docker run --rm --network=database_network -v "<changelogs absolute dir>":/liquibase/changelogs leiwang008/alpine_liquibase conf
-    ```
-
-2. Update database in 'alpine_postgres' by changelog files in folder 'changelogs'
+1. **Update database** in 'alpine_postgres' by changelog files in folder 'changelogs'
 
     ```
     docker run --rm --network=database_network -v "<changelogs absolute dir>":/liquibase/changelogs leiwang008/alpine_liquibase update
     ```
 
-3. Update database in 'alpine_postgres' by changelog files in folder 'changelogs' with more environment settings
+2. **Update database** in 'alpine_postgres' by changelog files in folder 'changelogs' with more environment settings (if the postgres database is started with different parameters other than default, we should start the liquibase with those parameters by environments)
     ```
     docker run --rm \
         --network=database_network \
         -v "<changelogs absolute dir>":/liquibase/changelogs \
-        -e LIQUIBASE_URL=jdbc:postgresql://alpine_postgres:5432/postgres \
-        -e LIQUIBASE_USERNAME=postgres \
-        -e LIQUIBASE_PASSWORD=mypass \
+        -e LIQUIBASE_URL=jdbc:postgresql://alpine_postgres_host:5432/postgres_db \
+        -e LIQUIBASE_USERNAME=postgres_user \
+        -e LIQUIBASE_PASSWORD=secretpass \
         leiwang008/alpine_liquibase update
     ```
 
-Usage with docker compose
--------------------------
+3. Showing the configurations
 
-The 'container_name' or 'hostname' all can be recognized as the contianer's hostname to connect!
+    ```
+    docker run --rm --network=database_network -v "<changelogs absolute dir>":/liquibase/changelogs leiwang008/alpine_liquibase conf
+    ```
 
+4. Start the image with a bash terminal, user can inspect the image.
+
+    ```
+    docker run --rm --network=database_network -v "<changelogs absolute dir>":/liquibase/changelogs -it leiwang008/alpine_liquibase bash
+    ```
+
+
+Usage with docker compose (see docker-compose.yaml)
+---------------------------------------------------
+1. build docker images, the proejct 'alpine_postgres' should be in the same parent-folder as this project
+
+  ```
+  docker-compose build
+  ```
+
+2. start the images
+
+  ```
+  docker-compose up -d
+  ```
+
+3. stop the containers
+
+  ```
+  docker-compose down
+  ```
 
 Environment variables
 ---------------------
 
 | Environment variable  | Description                        | Default                                                                                            |
 |-----------------------|------------------------------------|----------------------------------------------------------------------------------------------------|
-| `LIQUIBASE_VERSION`   | Installed Liquibase version        | **4.3.5** <font color="red">(not changeable)</font>                                                |
-| `POSTGRES_VERSION`    | Postgres connector jar version     | **42.2.20** <font color="red">(not changeable)</font>                                              |
+| `LIQUIBASE_VERSION`   | Installed Liquibase version        | **4.3.5** (not changeable)                                                                         |
+| `POSTGRES_VERSION`    | Postgres connector jar version     | **42.2.20** (not changeable)                                                                       |
 | `POSTGRES_SERVER`     | Postgres host name                 | **alpine_postgres**                                                                                |
 | `POSTGRES_DB`         | name of database to use            | **postgres**                                                                                       |
 | `POSTGRES_USER`       | DB username                        | **postgres**                                                                                       |
 | `POSTGRES_PASSWORD`   | DB password                        | **mypass**                                                                                         |
-| `LIQUIBASE_DRIVER`    | database driver's name             | **org.postgresql.Driver**                                                                          |
+| `LIQUIBASE_DRIVER`    | database driver's name             | **org.postgresql.Driver**  (not changeable)                                                        |
 | `LIQUIBASE_CLASSPATH` | Postgres connector jar             | **/liquibase/lib/postgresql.jar**                                                                  |
-| `LIQUIBASE_URL`       | DB url                             | "" (eg. `jdbc:postgresql://alpine_postgres:5432/database`)                                         |
-| `LIQUIBASE_CHANGELOG` | Changelog file                     | `classpath:/liquibase/changelogs/main.xml`                                                         |
+| `LIQUIBASE_URL`       | DB url                             | "" (eg. `jdbc:postgresql://alpine_postgres_host:5432/dbname`)                                      |
+| `LIQUIBASE_CHANGELOG` | Changelog file                     | **main_changelog.xml**                                                                             |
 | `LIQUIBASE_CONTEXTS`  | Server contexts                    | ""                                                                                                 |
 | `LIQUIBASE_HUB_MODE`  | If need hub dashboard              | **off** (on \| off)                                                                                |
-| `LIQUIBASE_OPTS`      | Additional options                 | ""  refer to https://docsstage.liquibase.com/tools-integrations/cli/home.html                      |
+| `LIQUIBASE_OPTS`      | Additional options                 | ""  (refer to https://docsstage.liquibase.com/tools-integrations/cli/home.html)                    |
 
 
-  <font color="red">*NOTE:* <br/>
+  **NOTE:** <br/>
   <ol>
-  <li>The environment '**POSTGRES_SERVER**' will be used to form a URL "jdbc:postgresql://${**POSTGRES_SERVER**}:5432/database" for liquibase to connect
-  <li>If the environment '**LIQUIBASE_URL**' is defined, it will be used for liquibase to connect at the first, '**POSTGRES_SERVER**' will be ignored.
+  <li>The environment '<b>POSTGRES_SERVER</b>' and '<b>POSTGRES_DB</b>' will be used to form a URL "jdbc:postgresql://${<b>POSTGRES_SERVER</b>}:5432/<b>POSTGRES_DB</b>" for liquibase to connect
+  <li>If the environment '<b>LIQUIBASE_URL</b>' is defined, it will be used at the first place for liquibase to connect, '<b>POSTGRES_SERVER</b>' and '<b>POSTGRES_DB</b>' will be ignored.
+  <li>'<b>POSTGRES_DB</b>', '<b>POSTGRES_USER</b>' and '<b>POSTGRES_PASSWORD</b>' should contain the same value for starting the 'alpine_postgres' database.
   </ol>
-  </font>  
 
 Reference
 ---------

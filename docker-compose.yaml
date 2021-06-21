@@ -5,20 +5,23 @@
 version: "3"
 services:
 
+    # The service name 'alpine_postgres' can be recognized as the contianer's hostname to connect!
     alpine_postgres:
         build: 
             context: ../alpine_postgres
         image: leiwang008/alpine_postgres
-        # container_name: my_postgres
-        hostname: my_postgres
+        # The 'container_name' can be recognized as the contianer's hostname to connect!
+        # container_name: alpine_postgres 
+        # The 'hostname' can be recognized as the contianer's hostname to connect!
+        hostname: alpine_postgres 
         ports:
             - "5432:5432"
         command: 
             - postgres
         networks:
-            - db_network
+            - database_network
         environment:
-            - POSTGRES_PASSWORD=mypass
+            - POSTGRES_PASSWORD=secretpass
             - POSTGRES_USER=rttest
             - POSTGRES_DB=rtdb 
 
@@ -33,20 +36,23 @@ services:
             # - config
             - update
         networks:
-            - db_network
+            - database_network
         volumes: 
             - "./changelogs:/liquibase/changelogs"
         environment:
-            - POSTGRES_SERVER=my_postgres
+            # the environment 'POSTGRES_SERVER' should keep the same value as alpine_postgres's service name or its hostname or its container_name
+            - POSTGRES_SERVER=alpine_postgres
+            # 'POSTGRES_DB', 'POSTGRES_USER' and 'POSTGRES_PASSWORD' should use the same value as in service 'alpine_postgres'.
             - POSTGRES_DB=rtdb
             - POSTGRES_USER=rttest
-            - POSTGRES_PASSWORD=mypass
-            # - LIQUIBASE_URL="jdbc:postgresql://my_postgres:5432/postgres"
+            - POSTGRES_PASSWORD=secretpass
+            # if 'LIQUIBASE_URL' is specified, 'POSTGRES_SERVER' and 'POSTGRES_DB' will be ignored
+            # - LIQUIBASE_URL="jdbc:postgresql://alpine_postgres:5432/rtdb"
         depends_on: 
             - alpine_postgres
 
 networks:
-    db_network:
+    database_network:
 
     # default:
     #     external: true
