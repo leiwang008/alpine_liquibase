@@ -71,19 +71,19 @@ Environment variables
 
 | Environment variable  | Description                        | Default                                                                                            |
 |-----------------------|------------------------------------|----------------------------------------------------------------------------------------------------|
-| `LIQUIBASE_VERSION`   | Installed Liquibase version        | *not changeable*  (4.3.5)                                                                          |
-| `POSTGRES_VERSION`    | Postgres connector jar version     | *not changeable*  (42.2.20)                                                                        |
-| `POSTGRES_SERVER`     | Postgres host name                 | *alpine_postgres*                                                                                  |
-| `POSTGRES_DB`         | name of database to use            | *postgres*                                                                                         |
-| `POSTGRES_USER`       | DB username                        | *postgres*                                                                                         |
-| `POSTGRES_PASSWORD`   | DB password                        | *mypass*                                                                                           |
-| `LIQUIBASE_DRIVER`    | database driver's name             | *org.postgresql.Driver*                                                                            |
-| `LIQUIBASE_CLASSPATH` | Postgres connector jar             | */liquibase/lib/postgresql.jar*                                                                    |
-| `LIQUIBASE_URL`       | DB url                             | ** (eg. `jdbc:postgresql://alpine_postgres:5432/database`)                                         |
+| `LIQUIBASE_VERSION`   | Installed Liquibase version        | **4.3.5** <font color="red">(not changeable)</font>                                                |
+| `POSTGRES_VERSION`    | Postgres connector jar version     | **42.2.20** <font color="red">(not changeable)</font>                                              |
+| `POSTGRES_SERVER`     | Postgres host name                 | **alpine_postgres**                                                                                |
+| `POSTGRES_DB`         | name of database to use            | **postgres**                                                                                       |
+| `POSTGRES_USER`       | DB username                        | **postgres**                                                                                       |
+| `POSTGRES_PASSWORD`   | DB password                        | **mypass**                                                                                         |
+| `LIQUIBASE_DRIVER`    | database driver's name             | **org.postgresql.Driver**                                                                          |
+| `LIQUIBASE_CLASSPATH` | Postgres connector jar             | **/liquibase/lib/postgresql.jar**                                                                  |
+| `LIQUIBASE_URL`       | DB url                             | "" (eg. `jdbc:postgresql://alpine_postgres:5432/database`)                                         |
 | `LIQUIBASE_CHANGELOG` | Changelog file                     | `classpath:/liquibase/changelogs/main.xml`                                                         |
-| `LIQUIBASE_CONTEXTS`  | Server contexts                    | *empty*                                                                                            |
-| `LIQUIBASE_HUB_MODE`  | If need hub dashboard              | *off* (on | off)                                                                                   |
-| `LIQUIBASE_OPTS`      | Additional options                 | *empty*  refer to https://docsstage.liquibase.com/tools-integrations/cli/home.html                 |
+| `LIQUIBASE_CONTEXTS`  | Server contexts                    | ""                                                                                                 |
+| `LIQUIBASE_HUB_MODE`  | If need hub dashboard              | **off** (on \| off)                                                                                |
+| `LIQUIBASE_OPTS`      | Additional options                 | ""  refer to https://docsstage.liquibase.com/tools-integrations/cli/home.html                      |
 
 
   <font color="red">*NOTE:* <br/>
