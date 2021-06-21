@@ -59,6 +59,20 @@ Usage
     ```
 
 
+Usage with batch scripts
+------------------------
+1. create network and start images 
+
+  ```
+  start.bat
+  ``` 
+
+2. stop and remove containers, and remove network
+
+  ```
+  stop.bat
+  ``` 
+
 Usage with docker compose (see docker-compose.yaml)
 ---------------------------------------------------
 1. build docker images, the proejct 'alpine_postgres' should be in the same parent-folder as this project
