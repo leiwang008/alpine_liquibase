@@ -31,3 +31,7 @@
 -u UID：指定用户UID
 
 -k SKEL：指定骨骼框架目录位置，默认/etc/skel，其实就是用来放置新用户配置文件的，添加一个新用户时，会将该框架目录中的文件复制到新用户的家目录下。
+
+# Bash Reference
+  [Bash](https://www.gnu.org/software/bash/manual/bash.html)
+  
